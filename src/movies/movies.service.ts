@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Movie } from "src/models/movie.model";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { MovieDocument, MovieS } from "src/models/schemas/movie.schema";
 @Injectable()
 export class MoviesService {
 
-  constructor(@InjectModel('Movie') private readonly movieModel: Model<Movie>) { }
+  constructor(@InjectModel(MovieS.name) private readonly movieModel: Model<MovieDocument>) { }
 
   async insertMovie(description: string, genre: string, rating: number, releaseDate: Date, title: string) {
     //if there is a different name then is should be title: Movietitle
@@ -45,14 +45,14 @@ export class MoviesService {
   }
   async deleteMovie(movieId: string) {
     const result = await this.movieModel.deleteOne({ _id: movieId }).exec();
-    if (result.deletedCount === 0) {
-      throw new NotFoundException("Could not find movie");
+    if (result.deletedCount===0){
+      throw new NotFoundException("Could not find");    
     }
 
 
 
   }
-  private async findMovie(id: string): Promise<Movie> {
+  private async findMovie(id: string): Promise<MovieDocument> {
     let movie;
     try {
       movie = await this.movieModel.findById(id);
